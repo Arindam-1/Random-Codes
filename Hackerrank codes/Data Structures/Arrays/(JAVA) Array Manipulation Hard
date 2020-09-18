@@ -1,0 +1,82 @@
+package com.arindam.testcodes;
+// Solution to Hackerrank's Array Manipulation Hard Problem
+// https://www.hackerrank.com/challenges/crush/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=arrays
+
+
+import java.io.*;
+import java.util.*;
+import java.util.Map;
+
+public class Solution {
+
+    // Complete the arrayManipulation function below.
+    static long arrayManipulation(int n, int[][] queries) {
+
+        // To populate and then sort according to the first element using entries;
+        List<AbstractMap.SimpleEntry<Integer,Integer>> sortedEntries = populateAndSortEntries(queries);
+
+        long max = 0;
+        long currentSum = 0;
+        for (Map.Entry<Integer, Integer> sortedEntry : sortedEntries) {
+            currentSum += sortedEntry.getValue();
+            max = Math.max(currentSum, max);
+        }
+
+        return max;
+    }
+
+    private static List<AbstractMap.SimpleEntry<Integer, Integer>> populateAndSortEntries(int[][] queries) {
+        List<AbstractMap.SimpleEntry<Integer, Integer>> unsortedEntries = new ArrayList<>();
+        // Construct the unsorted array.
+        for (int i = 0; i < queries.length; i++) {
+            unsortedEntries.add(new AbstractMap.SimpleEntry<>(queries[i][0], queries[i][2]));
+            unsortedEntries.add(new AbstractMap.SimpleEntry<>(queries[i][1], -queries[i][2]));
+        }
+
+        // Sort the array according to first element.
+        unsortedEntries.sort((a,b) -> {
+            if ( a.getKey().equals(b.getKey())) {
+                return b.getValue() - a.getValue();
+            } else {
+                return a.getKey() - b.getKey();
+            }
+        });
+
+        System.out.println(unsortedEntries);
+
+        return unsortedEntries;
+    }
+
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(System.getenv("OUTPUT_PATH")));
+
+        String[] nm = scanner.nextLine().split(" ");
+
+        int n = Integer.parseInt(nm[0]);
+
+        int m = Integer.parseInt(nm[1]);
+
+        int[][] queries = new int[m][3];
+
+        for (int i = 0; i < m; i++) {
+            String[] queriesRowItems = scanner.nextLine().split(" ");
+            scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
+
+            for (int j = 0; j < 3; j++) {
+                int queriesItem = Integer.parseInt(queriesRowItems[j]);
+                queries[i][j] = queriesItem;
+            }
+        }
+
+        long result = arrayManipulation(n, queries);
+
+        bufferedWriter.write(String.valueOf(result));
+        bufferedWriter.newLine();
+
+        bufferedWriter.close();
+
+        scanner.close();
+    }
+}
